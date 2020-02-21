@@ -98,6 +98,6 @@ def get_shot_input():
         
 def main():
   print(l)
-  placement1_list = init_list()
+  placement1_list = copy.deepcopy(board)
   placement1()
   
