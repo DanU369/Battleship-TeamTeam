@@ -146,7 +146,16 @@ def get_shot_input():
 #     else:
 #         print("Insert only 1 or 2!")
 #     return board
-
+def has_won(board,placement1):
+    
+    for i in board:
+        for j in i:
+            if j==s:
+                count+=1
+            if j>7:
+                return True
+            else:
+                return False
 
 def main():
     cover()
