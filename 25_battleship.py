@@ -624,5 +624,5 @@ def main():
             os.system("clear")
         count += 1
 
-if __name__="__main__":
+if __name__=="__main__":
     main()
