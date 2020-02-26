@@ -1,7 +1,8 @@
 import copy
 import sys
 import os
-
+import subprocess
+import time
 
 def cover():
     print(
@@ -25,6 +26,17 @@ def cover():
                 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww                 
 ''')
 
+def sound(sound_duration):
+    if sound_duration == 'long':
+        duration = 0.9  # seconds
+        freq = 300  # Hz
+        os.system('play -nq -t alsa synth {} sine {}'.format(duration, freq))
+    else:
+        duration = 0.08  # seconds
+        freq = 460  # Hz
+        os.system('play -nq -t alsa synth {} sine {}'.format(duration, freq))
+
+    
 def print_radars(player, tries_1_list, tries_2_list):
 
     if player == 1:
@@ -358,6 +370,204 @@ def placement2(placement2_list):
             continue
     return placement2_list
 
+def surroundings_forging_list(other_player_board, row, column, marked_board):
+    if 0 < row < 4 and 0 < column < 4:
+        surroundings_other_player_board = [other_player_board[row - 1][column], other_player_board[row + 1]
+                                           [column], other_player_board[row][column + 1], other_player_board[row][column - 1]]
+        surroundings_marked_board = [marked_board[row - 1][column], marked_board[row + 1]
+                                     [column], marked_board[row][column + 1], marked_board[row][column - 1]]
+        return surroundings_other_player_board, surroundings_marked_board
+
+    elif 0 < row < 4 and column == 0:
+        surroundings_other_player_board = [other_player_board[row - 1][column],
+                                           other_player_board[row + 1][column], other_player_board[row][column + 1]]
+        surroundings_marked_board = [marked_board[row - 1][column],
+                                     marked_board[row + 1][column], marked_board[row][column + 1]]
+        return surroundings_other_player_board, surroundings_marked_board
+
+    elif 0 < row < 4 and column == 4:
+        surroundings_other_player_board = [other_player_board[row - 1][column],
+                                           other_player_board[row + 1][column], other_player_board[row][column - 1]]
+        surroundings_marked_board = [marked_board[row - 1][column],
+                                     marked_board[row + 1][column], marked_board[row][column - 1]]
+        return surroundings_other_player_board, surroundings_marked_board
+
+    elif row == 0 and 0 < column < 4:
+        surroundings_other_player_board = [other_player_board[row + 1][column],
+                                           other_player_board[row][column + 1], other_player_board[row][column - 1]]
+        surroundings_marked_board = [marked_board[row + 1][column],
+                                     marked_board[row][column + 1], marked_board[row][column - 1]]
+        return surroundings_other_player_board, surroundings_marked_board
+
+    elif row == 4 and 0 < column < 4:
+        surroundings_other_player_board = [other_player_board[row - 1][column],
+                                           other_player_board[row][column + 1], other_player_board[row][column - 1]]
+        surroundings_marked_board = [marked_board[row - 1][column],
+                                     marked_board[row][column + 1], marked_board[row][column - 1]]
+        return surroundings_other_player_board, surroundings_marked_board
+
+    elif row == 0 and column == 0:
+        surroundings_other_player_board = [
+            other_player_board[row + 1][column], other_player_board[row][column + 1]]
+        surroundings_marked_board = [
+            marked_board[row + 1][column], marked_board[row][column + 1]]
+        return surroundings_other_player_board, surroundings_marked_board
+
+    elif row == 0 and column == 4:
+        surroundings_other_player_board = [
+            other_player_board[row + 1][column], other_player_board[row][column - 1]]
+        surroundings_marked_board = [
+            marked_board[row + 1][column], marked_board[row][column - 1]]
+        return surroundings_other_player_board, surroundings_marked_board
+
+    elif row == 4 and column == 0:
+        surroundings_other_player_board = [
+            other_player_board[row - 1][column], other_player_board[row][column + 1]]
+        surroundings_marked_board = [
+            marked_board[row - 1][column], marked_board[row][column + 1]]
+        return surroundings_other_player_board, surroundings_marked_board
+
+    elif row == 4 and column == 4:
+        surroundings_other_player_board = [
+            other_player_board[row - 1][column], other_player_board[row][column - 1]]
+        surroundings_marked_board = [
+            marked_board[row - 1][column], marked_board[row][column - 1]]
+        return surroundings_other_player_board, surroundings_marked_board
+    
+def changing_first_h_for_2xship(row, column, marked_board):
+    if 0 < row < 4 and 0 < column < 4:
+        surroundings_marked_board = [marked_board[row - 1][column], marked_board[row + 1]
+                                     [column], marked_board[row][column + 1], marked_board[row][column - 1]]
+        if surroundings_marked_board[0] == 'H':
+            return (row - 1, column)
+
+        elif surroundings_marked_board[1] == 'H':
+            return (row + 1, column)
+
+        elif surroundings_marked_board[2] == 'H':
+            return (row, column + 1)
+
+        else:
+            return (row, column - 1)
+
+    elif 0 < row < 4 and column == 0:
+        surroundings_marked_board = [marked_board[row - 1][column],
+                                     marked_board[row + 1][column], marked_board[row][column + 1]]
+        if surroundings_marked_board[0] == 'H':
+            return (row - 1, column)
+
+        elif surroundings_marked_board[1] == 'H':
+            return (row + 1, column)
+
+        else:
+            return (row, column + 1)
+
+    elif 0 < row < 4 and column == 4:
+        surroundings_marked_board = [marked_board[row - 1][column],
+                                     marked_board[row + 1][column], marked_board[row][column - 1]]
+        if surroundings_marked_board[0] == 'H':
+            return (row - 1, column)
+
+        elif surroundings_marked_board[1] == 'H':
+            return (row + 1, column)
+
+        else:
+            return (row, column - 1)
+
+    elif row == 0 and 0 < column < 4:
+        surroundings_marked_board = [marked_board[row + 1][column],
+                                     marked_board[row][column + 1], marked_board[row][column - 1]]
+        if surroundings_marked_board[0] == 'H':
+            return (row + 1, column)
+
+        elif surroundings_marked_board[1] == 'H':
+            return (row, column+1)
+
+        else:
+            return (row, column - 1)
+
+    elif row == 4 and 0 < column < 4:
+        surroundings_marked_board = [marked_board[row - 1][column],
+                                     marked_board[row][column + 1], marked_board[row][column - 1]]
+        if surroundings_marked_board[0] == 'H':
+            return (row - 1, column)
+
+        elif surroundings_marked_board[1] == 'H':
+            return (row, column+1)
+
+        else:
+            return (row, column - 1)
+
+    elif row == 0 and column == 0:
+        surroundings_marked_board = [
+            marked_board[row + 1][column], marked_board[row][column + 1]]
+        if surroundings_marked_board[0] == 'H':
+            return (row + 1, column)
+
+        else:
+            return (row, column + 1)
+
+    elif row == 0 and column == 4:
+        surroundings_marked_board = [
+            marked_board[row + 1][column], marked_board[row][column - 1]]
+        if surroundings_marked_board[0] == 'H':
+            return (row + 1, column)
+
+        else:
+            return (row, column - 1)
+
+    elif row == 4 and column == 0:
+        surroundings_marked_board = [
+            marked_board[row - 1][column], marked_board[row][column + 1]]
+        if surroundings_marked_board[0] == 'H':
+            return (row - 1, column)
+
+        else:
+            return (row, column + 1)
+
+    elif row == 4 and column == 4:
+        surroundings_marked_board = [
+            marked_board[row - 1][column], marked_board[row][column - 1]]
+        if surroundings_marked_board[0] == 'H':
+            return (row - 1, column)
+
+        else:
+            return (row, column - 1)
+
+def mark(other_player_board, row, column, marked_board):
+    new_row = 9
+    new_col = 9
+    surroundings_other_player_board, surroundings_marked_board = surroundings_forging_list(
+        other_player_board, row, column, marked_board)
+    if other_player_board[row][column] == 0:
+        print("You've missed!")
+        marked_board[row][column] = 'M'
+# in case of missing
+    elif marked_board[row][column] in ['M', 'S', 'H']:
+        print("Oops! Already tried this position. Choose a diferent one next time.")
+# in case of trying the same missed or sink as before
+    elif other_player_board[row][column] == 'X' and surroundings_other_player_board.count("X") == 0:
+        marked_board[row][column] = "S"
+        sound('long')
+        print("You've sunk a ship")
+# sinking a boat made out of one block
+    elif other_player_board[row][column] == 'X' and surroundings_marked_board.count("H") == 1:
+        marked_board[row][column] = "S"
+        new_row = changing_first_h_for_2xship(row, column, marked_board)[0]
+        new_col = changing_first_h_for_2xship(row, column, marked_board)[1]
+        marked_board[new_row][new_col] = "S"
+        sound('long')
+        print("You've sunk a ship")
+
+# checking for a sink in a 2 block ship
+    elif other_player_board[row][column] == 'X' and surroundings_other_player_board.count("X") == 1:
+        marked_board[row][column] = "H"
+        print("You've hit a ship!")
+        sound('short')
+# checking for a hit in a 2 block ship
+    else:
+        print("else din mark 273")  # de sters la final
+    return marked_board
 
 def get_shot_input(player):
     while True:
@@ -372,15 +582,6 @@ def get_shot_input(player):
             continue
 
 
-
-# def mark(player, board):
-#     if player == "1":
-#         board[row][column] = 'x'
-#     elif player == "2":
-#         board[row][column] = '0'
-#     else:
-#         print("Insert only 1 or 2!")
-#     return board
 def has_won(board,placement1):
     
     for i in board:
@@ -403,23 +604,25 @@ def main():
     placement2_list = copy.deepcopy(board)
     print("\nPlayer2, go away and let player1 place his ships\n")
     placement1(placement1_list)
-    print("\n"*250)
     print("\nPlayer1, go away and let player2 place his ships\n")
     input("Player 2 when you are ready press Enter...")
     placement2(placement2_list)
     while True:
         if count % 2 == 0:
             player == "1"
-            placement_1_list = placement1(board)
-            print(placement_1_list)
+            print_radars(player, tries_1_list, tries_2_list)
+            (row, col) = get_shot_input(player)
+            tries_1_list = mark(placement_2_list, row, col, tries_1_list)
+            print_radars(player, tries_1_list, tries_2_list)
+            os.system("clear")
         else:
             player == "2"
-            print_board(board)
-            placement_2_list = placement2(board)
-            print(placement_2_list)
-
+            print_radars(player, tries_1_list, tries_2_list)
+            (row, col) = get_shot_input(player)
+            tries_2_list = mark(placement_1_list, row, col, tries_2_list)
+            print_radars(player, tries_1_list, tries_2_list)
+            os.system("clear")
         count += 1
-        print("Teste github")
 
-
-main()
+if __name__="__main__":
+    main()
