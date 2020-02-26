@@ -1,4 +1,6 @@
 import copy
+import sys
+import os
 
 
 def cover():
@@ -23,6 +25,26 @@ def cover():
                 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww                 
 ''')
 
+def print_radars(player, tries_1_list, tries_2_list):
+
+    if player == 1:
+        print("      *****PLAYER {} IT'S YOUR TURN*****".format(player))
+    if player == 2:
+        print("                                            *****PLAYER {} IT'S YOUR TURN*****".format(player))
+    print('''
+                    1   2   3   4   5                     1   2   3   4   5
+                    
+                A   {}   {}   {}   {}   {}                 A   {}   {}   {}   {}   {}
+                
+                B   {}   {}   {}   {}   {}                 B   {}   {}   {}   {}   {}
+                
+                C   {}   {}   {}   {}   {}                 C   {}   {}   {}   {}   {}
+                
+                D   {}   {}   {}   {}   {}                 D   {}   {}   {}   {}   {}
+                
+                E   {}   {}   {}   {}   {}                 E   {}   {}   {}   {}   {}
+                
+                '''.format(tries_1_list[0][0], tries_1_list[0][1], tries_1_list[0][2], tries_1_list[0][3], tries_1_list[0][4], tries_2_list[0][0], tries_2_list[0][1], tries_2_list[0][2], tries_2_list[0][3], tries_2_list[0][4], tries_1_list[1][0], tries_1_list[1][1], tries_1_list[1][2], tries_1_list[1][3], tries_1_list[1][4], tries_2_list[1][0], tries_2_list[1][1], tries_2_list[1][2], tries_2_list[1][3], tries_2_list[1][4], tries_1_list[2][0], tries_1_list[2][1], tries_1_list[2][2], tries_1_list[2][3], tries_1_list[2][4], tries_2_list[2][0], tries_2_list[2][1], tries_2_list[2][2], tries_2_list[2][3], tries_2_list[2][4], tries_1_list[3][0], tries_1_list[3][1], tries_1_list[3][2], tries_1_list[3][3], tries_1_list[3][4], tries_2_list[3][0], tries_2_list[3][1], tries_2_list[3][2], tries_2_list[3][3], tries_2_list[3][4], tries_1_list[4][0], tries_1_list[4][1], tries_1_list[4][2], tries_1_list[4][3], tries_1_list[4][4], tries_2_list[4][0], tries_2_list[4][1], tries_2_list[4][2], tries_2_list[4][3], tries_2_list[4][4]))
 
 def init_list():
 
@@ -52,22 +74,22 @@ def print_board(board):
 
 def verificare_placement(placement_list, row, col):
     if row == 0 and col == 0:
-        if placement_list[1][0] == placement_list[0][1] == 0:
+        if placement_list[1][0] == placement_list[0][1] == placement_list[0][0] == 0:
             return True
         else:
             return False
     if row == 0 and col == 4:
-        if placement_list[0][3] == placement_list[1][4] == 0:
+        if placement_list[0][3] == placement_list[1][4] == placement_list[0][4] == 0:
             return True
         else:
             return False
     if row == 4 and col == 4:
-        if placement_list[4][3] == placement_list[3][4] == 0:
+        if placement_list[4][3] == placement_list[3][4] == placement_list[4][4] == 0:
             return True
         else:
             return False
     if row == 4 and col == 0:
-        if placement_list[3][0] == placement_list[4][1] == 0:
+        if placement_list[3][0] == placement_list[4][1] == placement_list[4][0] == 0:
             return True
         else:
             return False
@@ -100,8 +122,8 @@ def verificare_placement(placement_list, row, col):
 def placement1(placement1_list):
     shipsx1 = 3
     shipsx2 = 2
-    print_board(placement1_list)
     while shipsx1 > 0:
+        print_board(placement1_list)
         ships = shipsx1 + shipsx2
         print("Player 1, you have {} ships left to place".format(ships))
         print("Now you should place a 1 block ship")
@@ -115,13 +137,16 @@ def placement1(placement1_list):
                 placement1_list[row][col] = "X"
                 shipsx1 -= 1
             elif verificare_placement(placement1_list, row, col) == False:
+                os.system("clear")
                 print("Your ships are too close")
                 continue
-            print_board(placement1_list)
+            os.system("clear")
         else:
+            os.system("clear")
             print("Invalid input!")
             continue
     while shipsx2 > 0:
+        print_board(placement1_list)
         ships = shipsx1 + shipsx2
         print("Player 1, you have {} ships left to place".format(ships))
         print("Now you should place a 2 blocks ship")
@@ -137,67 +162,78 @@ def placement1(placement1_list):
                 if direction in ["n", "s", "e", "w"]:
                     if direction == "n":
                         if row == 0:
+                            os.system("clear")
                             print(
-                                "In this our case the world is flat and you can't cross the edges")
+                                "In this case the world is flat and you can't cross the edges")
                             continue
                         verificare_placement(placement1_list, row-1, col)
                         if verificare_placement(placement1_list, row-1, col) == True:
                             placement1_list[row][col] = "X"
                             placement1_list[row-1][col] = "X"
-                            shipsx1 -= 1
-                            print_board(placement1_list)
+                            shipsx2 -= 1
+                            os.system("clear")
                         elif verificare_placement(placement1_list, row-1, col) == False:
+                            os.system("clear")
                             print("Your ships are too close!")
                             continue
                     if direction == "s":
                         if row == 4:
+                            os.system("clear")
                             print(
-                                "In this our case the world is flat and you can't cross the edges")
+                                "In this case the world is flat and you can't cross the edges")
                             continue
                         verificare_placement(placement1_list, row+1, col)
                         if verificare_placement(placement1_list, row+1, col) == True:
                             placement1_list[row][col] = "X"
                             placement1_list[row+1][col] = "X"
-                            shipsx1 -= 1
-                            print_board(placement1_list)
+                            shipsx2 -= 1
+                            os.system("clear")
                         elif verificare_placement(placement1_list, row+1, col) == False:
+                            os.system("clear")
                             print("Your ships are too close!")
                             continue
                     if direction == "e":
                         if col == 4:
+                            os.system("clear")
                             print(
-                                "In this our case the world is flat and you can't cross the edges")
+                                "In this case the world is flat and you can't cross the edges")
                             continue
                         verificare_placement(placement1_list, row, col+1)
                         if verificare_placement(placement1_list, row, col+1) == True:
                             placement1_list[row][col] = "X"
                             placement1_list[row][col+1] = "X"
-                            shipsx1 -= 1
-                            print_board(placement1_list)
+                            shipsx2 -= 1
+                            os.system("clear")
                         elif verificare_placement(placement1_list, row, col+1) == False:
+                            os.system("clear")
                             print("Your ships are too close!")
                             continue
                     if direction == "w":
                         if col == 0:
+                            os.system("clear")
                             print(
-                                "In this our case the world is flat and you can't cross the edges")
+                                "In this case the world is flat and you can't cross the edges")
                             continue
                         verificare_placement(placement1_list, row, col-1)
                         if verificare_placement(placement1_list, row, col-1) == True:
                             placement1_list[row][col] = "X"
                             placement1_list[row][col-1] = "X"
-                            shipsx1 -= 1
-                            print_board(placement1_list)
+                            shipsx2 -= 1
+                            os.system("clear")
                         elif verificare_placement(placement1_list, row, col-1) == False:
+                            os.system("clear")
                             print("Your ships are too close!")
                             continue
                 else:
+                    os.system("clear")
                     print("Invalid input!")
                     continue
             elif verificare_placement(placement1_list, row, col) == False:
+                os.system("clear")
                 print("Your ships are too close")
                 continue
         else:
+            os.system("clear")
             print("Invalid input!")
             continue
     return placement1_list
@@ -205,10 +241,10 @@ def placement1(placement1_list):
 def placement2(placement2_list):
     shipsx1 = 3
     shipsx2 = 2
-    print_board(placement2_list)
     while shipsx1 > 0:
+        print_board(placement2_list)
         ships = shipsx1 + shipsx2
-        print("Player 1, you have {} ships left to place".format(ships))
+        print("Player 2, you have {} ships left to place".format(ships))
         print("Now you should place a 1 block ship")
         place = str(
             input("Choose a position to place your ship: ").lower())
@@ -220,16 +256,19 @@ def placement2(placement2_list):
                 placement2_list[row][col] = "X"
                 shipsx1 -= 1
             elif verificare_placement(placement2_list, row, col) == False:
+                os.system("clear")
                 print("Your ships are too close")
                 continue
-            print_board(placement2_list)
+            os.system("clear")
         else:
+            os.system("clear")
             print("Invalid input!")
             continue
 
     while shipsx2 > 0:
+        print_board(placement2_list)
         ships = shipsx1 + shipsx2
-        print("Player 1, you have {} ships left to place".format(ships))
+        print("Player 2, you have {} ships left to place".format(ships))
         print("Now you should place a 2 blocks ship")
         place = str(
             input("Choose a position to place your ship's head: ").lower())
@@ -243,67 +282,78 @@ def placement2(placement2_list):
                 if direction in ["n", "s", "e", "w"]:
                     if direction == "n":
                         if row == 0:
+                            os.system("clear")
                             print(
-                                "In this our case the world is flat and you can't cross the edges")
+                                "In this case the world is flat and you can't cross the edges")
                             continue
                         verificare_placement(placement2_list, row-1, col)
                         if verificare_placement(placement2_list, row-1, col) == True:
                             placement2_list[row][col] = "X"
                             placement2_list[row-1][col] = "X"
-                            shipsx1 -= 1
-                            print_board(placement2_list)
+                            shipsx2 -= 1
+                            os.system("clear")
                         elif verificare_placement(placement2_list, row-1, col) == False:
+                            os.system("clear")
                             print("Your ships are too close!")
                             continue
                     if direction == "s":
                         if row == 4:
+                            os.system("clear")
                             print(
-                                "In this our case the world is flat and you can't cross the edges")
+                                "In this case the world is flat and you can't cross the edges")
                             continue
                         verificare_placement(placement2_list, row+1, col)
                         if verificare_placement(placement2_list, row+1, col) == True:
                             placement2_list[row][col] = "X"
                             placement2_list[row+1][col] = "X"
-                            shipsx1 -= 1
-                            print_board(placement2_list)
+                            shipsx2 -= 1
+                            os.system("clear")
                         elif verificare_placement(placement2_list, row+1, col) == False:
+                            os.system("clear")
                             print("Your ships are too close!")
                             continue
                     if direction == "e":
                         if col == 4:
+                            os.system("clear")
                             print(
-                                "In this our case the world is flat and you can't cross the edges")
+                                "In this case the world is flat and you can't cross the edges")
                             continue
                         verificare_placement(placement2_list, row, col+1)
                         if verificare_placement(placement2_list, row, col+1) == True:
                             placement2_list[row][col] = "X"
                             placement2_list[row][col+1] = "X"
-                            shipsx1 -= 1
-                            print_board(placement2_list)
+                            shipsx2 -= 1
+                            os.system("clear")
                         elif verificare_placement(placement2_list, row, col+1) == False:
+                            os.system("clear")
                             print("Your ships are too close!")
                             continue
                     if direction == "w":
                         if col == 0:
+                            os.system("clear")
                             print(
-                                "In this our case the world is flat and you can't cross the edges")
+                                "In this case the world is flat and you can't cross the edges")
                             continue
                         verificare_placement(placement2_list, row, col-1)
                         if verificare_placement(placement2_list, row, col-1) == True:
                             placement2_list[row][col] = "X"
                             placement2_list[row][col-1] = "X"
-                            shipsx1 -= 1
-                            print_board(placement2_list)
+                            shipsx2 -= 1
+                            os.system("clear")
                         elif verificare_placement(placement2_list, row, col-1) == False:
+                            os.system("clear")
                             print("Your ships are too close!")
                             continue
                 else:
+                    os.system("clear")
                     print("Invalid input!")
                     continue
             elif verificare_placement(placement2_list, row, col) == False:
+                os.system("clear")
                 print("Your ships are too close")
                 continue
         else:
+            os.system("clear")
             print("Invalid input!")
             continue
     return placement2_list
